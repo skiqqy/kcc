@@ -29,30 +29,30 @@ For compilation we will be using a Makefile, with each section having its own
 To compile the entire project, simply type `make`, each sub group will be
 compiled like so:
 
-* scanner
+* test scanner
 ````
-make scanner
-````
-
----
-
-* parser
-````
-make parser
+make testscanner
 ````
 
 ---
 
-* typechecking
+* test parser
 ````
-make type
+make testparser
 ````
 
 ---
 
-* codegen
+* test typechecking
 ````
-make code
+make testtype
+````
+
+---
+
+* test codegen
+````
+make testcode
 ````
 
 ---

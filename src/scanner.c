@@ -8,11 +8,3 @@
 #include<stdlib.h>
 #include<stdio.h>
 
-int main() {
-	/*
-	 * 
-	 * Temporary main function
-	 *
-	 */
-	return EXIT_SUCCESS;
-}
