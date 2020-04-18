@@ -20,3 +20,6 @@ testscanner: install scanner.o
 
 scanner.o: install
 	$(COMP) $(FLAGS) -c -o obj/scanner.o src/scanner.c
+
+test: testscanner
+	./test.sh
