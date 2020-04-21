@@ -7,7 +7,7 @@ int main()
 	/* Create a push register instruction */
 	struct PushInstructionRegister testInstr;
 	testInstr.type = PUSH_R;
-	testInstr.width = 2;
+	testInstr.width = 4;
 	testInstr.registerType = EAX;
 		
 	char* instruction = generateAssemblyInstruction((struct Instruction*)&testInstr);
