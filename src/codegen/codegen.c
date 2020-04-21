@@ -17,7 +17,7 @@ void writeAssembly(int, char*);
 void writeOut(char* filename, char* text)
 {
 	/* Open the file for reading */
-	signed long fd = open(filename, O_CREAT|O_RDWR);
+	signed long fd = open(filename, O_CREAT|O_RDWR, S_IRWXU);
 	printf("fd: %d\n", (signed int)fd);
 
 	/* Check to make sure we have a valid fd */
