@@ -37,7 +37,7 @@ void writeOut(char* filename, char* text)
 void writeAssembly(int fd, char* text)
 {
 	/* Get the length of the text */
-	unsigned int textLength = strlen(text);
+	unsigned long textLength = strlen(text);
 
 	/* Write the bytes to the file, `fd` */
 	write(fd, text, textLength);
