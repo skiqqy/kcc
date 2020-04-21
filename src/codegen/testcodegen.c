@@ -4,6 +4,9 @@
 
 int main()
 {
+	/* Allocate code string */
+	char* codeString = (char*)malloc(1000);
+	*codeString = 0;
 
 	/* Create a push register instruction */
 	struct GlobalPlacement testInstr4;
@@ -12,6 +15,8 @@ int main()
 		
 	char* instruction = generateAssemblyInstruction((struct Instruction*)&testInstr4);
 	printf("Output instruction: \"%s\"\n", instruction);
+	strcat(codeString, instruction);
+	strcat(codeString, "\n");
 	free(instruction);
 
 	/* Create a push register instruction */
@@ -21,12 +26,9 @@ int main()
 		
 	instruction = generateAssemblyInstruction((struct Instruction*)&testInstr5);
 	printf("Output instruction: \"%s\"\n", instruction);
-	free(instruction);
-
-
-	
-	
-
+	strcat(codeString, instruction);
+	strcat(codeString, "\n");
+	free(instruction);	
 
 	/* Create a push register instruction */
 	struct LabelPlacement testInstr3;
@@ -35,6 +37,8 @@ int main()
 				
 	instruction = generateAssemblyInstruction((struct Instruction*)&testInstr3);
 	printf("Output instruction: \"%s\"\n", instruction);
+	strcat(codeString, instruction);
+	strcat(codeString, "\n");
 	free(instruction);
 
 
@@ -46,6 +50,8 @@ int main()
 		
 	instruction = generateAssemblyInstruction((struct Instruction*)&testInstr);
 	printf("Output instruction: \"%s\"\n", instruction);
+	strcat(codeString, instruction);
+	strcat(codeString, "\n");
 	free(instruction);
 
 	/* Create a push register instruction */
@@ -56,9 +62,13 @@ int main()
 			
 	instruction = generateAssemblyInstruction((struct Instruction*)&testInstr2);
 	printf("Output instruction: \"%s\"\n", instruction);
+	strcat(codeString, instruction);
+	strcat(codeString, "\n");
 	free(instruction);
 	
-		
+
+	printf("Generated code: %s\n", codeString);
+	writeOut("out.s", codeString);
 			
 
 }

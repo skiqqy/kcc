@@ -8,6 +8,7 @@
 #include<string.h>
 #include<fcntl.h>
 #include<stdlib.h>
+#include<stdio.h>
 
 /* Prototypes */
 void writeAssembly(int, char*);
@@ -16,7 +17,8 @@ void writeAssembly(int, char*);
 void writeOut(char* filename, char* text)
 {
 	/* Open the file for reading */
-	int fd = open(filename, O_CREAT);
+	signed long fd = open(filename, O_CREAT|O_RDWR);
+	printf("fd: %d\n", (signed int)fd);
 
 	/* Check to make sure we have a valid fd */
 	if(fd >= 0)
