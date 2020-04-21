@@ -1,8 +1,5 @@
 /* All stack-related functions */
 
-#include "../codegen.h"
-#include "../registers.h"
-
 /* A push instruction (immediate) */
 struct PushInstructionImmediate
 {
@@ -15,5 +12,6 @@ struct PushInstructionImmediate
 struct PushInstructionRegister
 {
 	enum InstructionType type;
+	unsigned char width;
 	enum Register registerType;
 };
