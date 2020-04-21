@@ -4,6 +4,7 @@
 #include "registers.h"
 #include "instr/stack.h"
 #include "instr/asm.h"
+#include "instr/flow.h"
 #include<unistd.h>
 #include<string.h>
 #include<fcntl.h>
@@ -157,6 +158,17 @@ char* generateAssemblyInstruction(struct Instruction* instruction)
 		/* Build the instruction string */
 		strcat(instructionString, ".global ");
 		strcat(instructionString, globalName);
+	}
+	else if(instruction->type == JUMP_I)
+	{
+		struct JumpImmediateInstruction* jumpII = (struct JumpImmediateInstruction*)instruction;
+
+		/* Get the label (or value TODO: rename) */
+		char* label = jumpII->label;
+
+		/* Build the instruction string */
+		strcat(instructionString, "jmp ");
+		strcat(instructionString, label);
 	}
 
 	return instructionString;

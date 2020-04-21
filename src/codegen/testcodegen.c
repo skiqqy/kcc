@@ -65,6 +65,17 @@ int main()
 	strcat(codeString, instruction);
 	strcat(codeString, "\n");
 	free(instruction);
+
+	/* Create a jump immediate */
+	struct JumpImmediateInstruction testJMPIInstruction;
+	testJMPIInstruction.type = JUMP_I;
+	testJMPIInstruction.label = "main";
+
+	instruction = generateAssemblyInstruction((struct Instruction*)&testJMPIInstruction);
+	printf("Output instruction: \"%s\"\n", instruction);
+	strcat(codeString, instruction);
+	strcat(codeString, "\n");
+	free(instruction);
 	
 
 	printf("Generated code: %s\n", codeString);
