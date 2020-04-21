@@ -8,7 +8,7 @@ enum InstructionType
 
 
 
-	LABEL_P
+	LABEL_P, SECTION_P, GLOBAL_P
 };
 
 /* Represents an instruction */

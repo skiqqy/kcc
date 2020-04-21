@@ -134,6 +134,28 @@ char* generateAssemblyInstruction(struct Instruction* instruction)
 		strcat(instructionString, labelName);
 		strcat(instructionString, ":");
 	}
+	else if(instruction->type == SECTION_P)
+	{
+		struct SectionPlacement* sectionPI = (struct SectionPlacement*)instruction;
+
+		/* Get the name of the section */
+		char* sectionName = sectionPI->name;
+
+		/* Build the instruction string */
+		strcat(instructionString, ".");
+		strcat(instructionString, sectionName);
+	}
+	else if(instruction->type == GLOBAL_P)
+	{
+		struct GlobalPlacement* globalPI = (struct GlobalPlacement*)instruction;
+
+		/* Get the name of the globalized entity */
+		char* globalName = globalPI->name;
+
+		/* Build the instruction string */
+		strcat(instructionString, ".global ");
+		strcat(instructionString, globalName);
+	}
 
 	return instructionString;
 }
