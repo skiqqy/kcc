@@ -1,5 +1,6 @@
 #include<stdio.h>
 #include "codegen.c"
+#include<stdlib.h>
 
 int main()
 {
@@ -8,8 +9,8 @@ int main()
 	testInstr.type = PUSH_R;
 	testInstr.width = 2;
 	testInstr.registerType = EAX;
-	
-	
-	char* instruction = generateAssemblyInstruction(&testInstr);
+		
+	char* instruction = generateAssemblyInstruction((struct Instruction*)&testInstr);
 	printf("Output instruction: \"%s\"", instruction);
+	free(instruction);
 }
