@@ -5,6 +5,7 @@
 #include "instr/stack.h"
 #include "instr/asm.h"
 #include "instr/flow.h"
+#include "instr/misc.h"
 #include<unistd.h>
 #include<string.h>
 #include<fcntl.h>
@@ -169,6 +170,11 @@ char* generateAssemblyInstruction(struct Instruction* instruction)
 		/* Build the instruction string */
 		strcat(instructionString, "jmp ");
 		strcat(instructionString, label);
+	}
+	else if(instruction->type == NOP)
+	{
+		/* Build the instruction string */
+		strcat(instructionString, "nop");
 	}
 
 	return instructionString;

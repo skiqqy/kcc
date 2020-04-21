@@ -66,6 +66,16 @@ int main()
 	strcat(codeString, "\n");
 	free(instruction);
 
+	/* Create a nop instruction */
+	struct NopInstruction testNOP;
+	testNOP.type = NOP;
+
+	instruction = generateAssemblyInstruction((struct Instruction*)&testNOP);
+	printf("Output instruction: \"%s\"\n", instruction);
+	strcat(codeString, instruction);
+	strcat(codeString, "\n");
+	free(instruction);
+
 	/* Create a jump immediate */
 	struct JumpImmediateInstruction testJMPIInstruction;
 	testJMPIInstruction.type = JUMP_I;
