@@ -15,3 +15,11 @@ struct PushInstructionRegister
 	unsigned char width;
 	enum Register registerType;
 };
+
+/* A pop instruction */
+struct PopInstruction
+{
+	enum InstructionType type;
+	unsigned char width;
+	enum Register registerType;
+};

@@ -62,29 +62,62 @@ char* generateAssemblyInstruction(struct Instruction* instruction)
 		struct PushInstructionRegister* pushIR = (struct PushInstructionRegister*)instruction;
 
 		/* Find the correct push instruction */
+		unsigned char width = pushIR->width;
 		char* pushInstructionString;
-		if(pushIR->width == 1)
+		if(width == 1)
 		{
 			pushInstructionString = "pushb";
 		}
-		else if(pushIR->width == 2)
+		else if(width == 2)
 		{
 			pushInstructionString = "pushw";
 		}
-		else if(pushIR->width == 4)
+		else if(width == 4)
 		{
 			pushInstructionString = "pushl";
 		}
-		else if(pushIR->width == 8)
+		else if(width == 8)
 		{
 			pushInstructionString = "pushq";
 		}
 
-
 		/* Get the register name */
 		char* registerName = registerNames[pushIR->registerType];
 
+		/* Build the instruction string */
 		strcat(instructionString, pushInstructionString);
+		strcat(instructionString, " ");
+		strcat(instructionString, registerName);		
+	}
+	else if(instruction->type == POP_R)
+	{
+		struct PopInstruction* popI = (struct PopInstruction*)instruction;
+
+		/* Find the correct pop instruction */
+		unsigned char width = popI->width;
+		char* popInstructionString;
+		if(width == 1)
+		{
+			popInstructionString = "popb";
+		}
+		else if(width == 2)
+		{
+			popInstructionString = "popw";
+		}
+		else if(width == 4)
+		{
+			popInstructionString = "popl";
+		}
+		else if(width == 8)
+		{
+			popInstructionString = "popq";
+		}
+
+		/* Get the register name */
+		char* registerName = registerNames[popI->registerType];
+		
+		/* Build the instruction string */
+		strcat(instructionString, popInstructionString);
 		strcat(instructionString, " ");
 		strcat(instructionString, registerName);		
 	}
