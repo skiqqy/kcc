@@ -11,7 +11,7 @@ int main()
 	testInstr.registerType = EAX;
 		
 	char* instruction = generateAssemblyInstruction((struct Instruction*)&testInstr);
-	printf("Output instruction: \"%s\"", instruction);
+	printf("Output instruction: \"%s\"\n", instruction);
 	free(instruction);
 
 	/* Create a push register instruction */
@@ -21,7 +21,7 @@ int main()
 	testInstr2.registerType = EAX;
 		
 	instruction = generateAssemblyInstruction((struct Instruction*)&testInstr2);
-	printf("Output instruction: \"%s\"", instruction);
+	printf("Output instruction: \"%s\"\n", instruction);
 	free(instruction);
 
 }
