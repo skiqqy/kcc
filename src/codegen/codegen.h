@@ -1,7 +1,14 @@
 /* Represents the type of instruction */
 enum InstructionType
 {
-	PUSH_I, PUSH_R, POP_R
+	PUSH_I, PUSH_R, POP_R,
+
+
+
+
+
+
+	LABEL_P
 };
 
 /* Represents an instruction */

@@ -19,9 +19,20 @@ int main()
 	testInstr2.type = POP_R;
 	testInstr2.width = 4;
 	testInstr2.registerType = EAX;
-		
+			
 	instruction = generateAssemblyInstruction((struct Instruction*)&testInstr2);
 	printf("Output instruction: \"%s\"\n", instruction);
 	free(instruction);
+	
+	/* Create a push register instruction */
+	struct LabelPlacement testInstr3;
+	testInstr3.type = LABEL_P;
+	testInstr3.label = "main";
+				
+	instruction = generateAssemblyInstruction((struct Instruction*)&testInstr3);
+	printf("Output instruction: \"%s\"\n", instruction);
+	free(instruction);
+		
+			
 
 }

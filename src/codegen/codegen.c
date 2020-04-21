@@ -3,6 +3,7 @@
 #include "codegen.h"
 #include "registers.h"
 #include "instr/stack.h"
+#include "instr/asm.h"
 #include<unistd.h>
 #include<string.h>
 #include<fcntl.h>
@@ -55,6 +56,7 @@ char* generateAssemblyInstruction(struct Instruction* instruction)
 
 	/* TODO: By dynamic, more so than allocating 20 */
 	instructionString = (char*)malloc(20);
+	*instructionString = 0; /* Zero out the first byte, as to make empty string */
 
 	/* Check the instruction type */
 	if(instruction->type == PUSH_R)
@@ -120,6 +122,17 @@ char* generateAssemblyInstruction(struct Instruction* instruction)
 		strcat(instructionString, popInstructionString);
 		strcat(instructionString, " ");
 		strcat(instructionString, registerName);		
+	}
+	else if(instruction->type == LABEL_P)
+	{
+		struct LabelPlacement* labelPI = (struct LabelPlacement*)instruction;
+
+		/* Get the name of the label */
+		char* labelName = labelPI->label;
+
+		/* Build the instruction string */
+		strcat(instructionString, labelName);
+		strcat(instructionString, ":");
 	}
 
 	return instructionString;
