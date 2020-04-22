@@ -1,11 +1,11 @@
 /* TODO: Header */
 
 #include "codegen.h"
-#include "registers.h"
-#include "instr/stack.h"
-#include "instr/asm.h"
-#include "instr/flow.h"
-#include "instr/misc.h"
+#include "codegen/registers.h"
+#include "codegen/instr/stack.h"
+#include "codegen/instr/asm.h"
+#include "codegen/instr/flow.h"
+#include "codegen/instr/misc.h"
 #include<unistd.h>
 #include<string.h>
 #include<fcntl.h>
@@ -175,6 +175,14 @@ char* generateAssemblyInstruction(struct Instruction* instruction)
 	{
 		/* Build the instruction string */
 		strcat(instructionString, "nop");
+	}
+	else if(instruction->type == MOVEIR)
+	{
+		/* TODO: Implement me (Tristan) */
+	}
+	else if(instruction->type == MOVEIRD)
+	{
+		/* TODO: Implement me (Tristan) */
 	}
 
 	return instructionString;
