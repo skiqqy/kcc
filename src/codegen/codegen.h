@@ -11,7 +11,16 @@ enum InstructionType
 	LABEL_P, SECTION_P, GLOBAL_P,
 
 
-	JUMP_I
+	JUMP_I,
+
+
+
+
+
+
+
+
+	NOP
 };
 
 /* Represents an instruction */
