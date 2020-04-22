@@ -20,7 +20,9 @@ enum InstructionType
 
 
 
-	NOP
+	NOP,
+
+	MOVEIR, MOVEIRD
 };
 
 /* Represents an instruction */
