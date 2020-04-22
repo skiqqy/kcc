@@ -11,18 +11,11 @@ enum InstructionType
 	LABEL_P, SECTION_P, GLOBAL_P,
 
 
-	JUMP_I,
-
-
-
-
-
-
 
 
 	NOP,
 
-	MOVEIR, MOVEIRD
+	MOVEIR, MOVEIRD,
 	JUMP_I
 };
 
