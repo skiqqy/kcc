@@ -1,6 +1,6 @@
 *.swp
 bin
 obj
-src/codegenTest
-src/out.s
-src/kcc.out
+src/codegen/codegenTest
+src/codegen/out.s
+src/codegen/kcc.out
