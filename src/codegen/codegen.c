@@ -6,6 +6,7 @@
 #include "instr/asm.h"
 #include "instr/flow.h"
 #include "instr/misc.h"
+#include "instr/data.h"
 #include<unistd.h>
 #include<string.h>
 #include<fcntl.h>
@@ -179,6 +180,40 @@ char* generateAssemblyInstruction(struct Instruction* instruction)
 	else if(instruction->type == MOVEIR)
 	{
 		/* TODO: Implement me (Tristan) */
+		struct MoveIRInstruction* moveIR = (struct MoveIRInstruction*)instruction;
+
+		/* Find the correct mov instruction */
+		unsigned char width = moveIR->width;
+		char* movInstructionString;
+		if(width == 1)
+		{
+			movInstructionString = "movb";
+		}
+		else if(width == 2)
+		{
+			movInstructionString = "movw";
+		}
+		else if(width == 4)
+		{
+			movInstructionString = "movl";
+		}
+		else if(width == 8)
+		{
+			movInstructionString = "movq";
+		}
+
+		/* Get the immediate */
+		char* immediate = moveIR->value;
+
+		/* Get the register name */
+		char* registerName = registerNames[moveIR->registerType];
+
+		/* Build the instruction string */
+		strcat(instructionString, movInstructionString);
+		strcat(instructionString, " ");
+		strcat(instructionString, immediate);
+		strcat(instructionString, ", ");
+		strcat(instructionString, registerName);
 	}
 	else if(instruction->type == MOVEIRD)
 	{
