@@ -23,6 +23,7 @@ enum InstructionType
 	NOP,
 
 	MOVEIR, MOVEIRD
+	JUMP_I
 };
 
 /* Represents an instruction */
