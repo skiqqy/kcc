@@ -22,7 +22,8 @@ void initGrammar(Grammar* g) {
   MAIN.rep = "main";
 
   g->st = (struct token**)malloc(16 * sizeof(struct token*));
-  g->pattern = (char*)malloc(0);
+  g->pattern = (char*)malloc(7 * sizeof(char));
+  strcpy(g->pattern, "(main)");
   g->st[0] = &MAIN;
   g->num = 1;
   g->all = 16;
@@ -39,9 +40,9 @@ void addToken(Grammar* g, int isTerm, char* rep) {
   g->st[g->num]->rep = (char*)malloc(sizeof(rep));
   g->pattern = (char*)realloc(g->pattern, (strlen(g->pattern)+strlen(rep)+4)*sizeof(char));
   if(debug > 0) printf("Adding Token: %s\n", rep);
-  strcat(g->pattern, "(");
+  strcat(g->pattern, "|(");
   strcat(g->pattern, rep);
-  strcat(g->pattern, ")|");
+  strcat(g->pattern, ")");
   strcpy(g->st[g->num]->rep, rep);
   g->num++;
 }
@@ -74,7 +75,7 @@ int* r_gmatch (regex_t* r, const char* str)
     if (g[i].rm_so == (size_t)(-1) || g[i].rm_so == g[i].rm_eo || g[i].rm_so > strlen(str)) {}
     else {
       if(debug > 1) printf("%d (%d:%d), ", (int) i, g[i].rm_so, g[i].rm_eo);
-      matches[mnum] = i;
+      matches[mnum] = i-1;
       mnum++;
       matches = (int*)realloc(matches, (mnum+1) * sizeof(int));
     }
