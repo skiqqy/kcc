@@ -22,8 +22,8 @@ void initGrammar(Grammar* g) {
   MAIN.rep = "main";
 
   g->st = (struct token**)malloc(16 * sizeof(struct token*));
-  g->pattern = (char*)malloc(7 * sizeof(char));
-  strcpy(g->pattern, "(main)");
+  g->pattern = (char*)malloc(8 * sizeof(char));
+  strcpy(g->pattern, "(^main)");
   g->st[0] = &MAIN;
   g->num = 1;
   g->all = 16;
@@ -38,9 +38,9 @@ void addToken(Grammar* g, int isTerm, char* rep) {
   g->st[g->num]->isTerm = isTerm;
   g->st[g->num]->id = g->num;
   g->st[g->num]->rep = (char*)malloc(sizeof(rep));
-  g->pattern = (char*)realloc(g->pattern, (strlen(g->pattern)+strlen(rep)+4)*sizeof(char));
+  g->pattern = (char*)realloc(g->pattern, (strlen(g->pattern)+strlen(rep)+5)*sizeof(char));
   if(debug > 0) printf("Adding Token: %s\n", rep);
-  strcat(g->pattern, "|(");
+  strcat(g->pattern, "|(^");
   strcat(g->pattern, rep);
   strcat(g->pattern, ")");
   strcpy(g->st[g->num]->rep, rep);
@@ -101,9 +101,12 @@ void tokenise(char* fname, Grammar* g) {
         if(debug > 0) printf("Multiple matches\t\033[1;31m#%d\033[0;0m\n", gm[i]);
       }
     } else if(gm[0] == 2) {
-        if(debug > 0) printf("Exact match\t\033[1;32m#%d: %s\033[0;0m\n", gm[1], g->st[gm[1]]->rep);
+        if(debug > 0) {
+          if(gm[1] == g->num) printf("\033[1;36mNo token listed\033[0;0m\n");
+          else printf("Exact match\t\033[1;32m#%d: %s\033[0;0m\n", gm[1], g->st[gm[1]]->rep);
+        }
     } else {
-        if(debug > 0) printf("\033[1;36mNo match\033[0;0m\n");
+        if(debug > 0) printf("\033[1;31mNo match\033[0;0m\n");
     }
     if(debug > 0) printf("-------------\n\n");
 
@@ -124,6 +127,10 @@ int main(int argv, char* argc[]){
     addToken(&ST, TRUE, buffer);
   }
   fclose(file);
+
+  //TODO: move this somewhere else
+  //ST.pattern = (char*)realloc(ST.pattern, (strlen(ST.pattern)+6)*sizeof(char));
+  //strcat(ST.pattern, "|(^.)");
 
   if(argv != 2) {
     printf("No arguments given.");
