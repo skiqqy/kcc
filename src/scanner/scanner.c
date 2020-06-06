@@ -13,27 +13,24 @@ int debug = 1;
 
 typedef struct {
   struct token** st; //array of pointers to tokens
-  //struct tst* indices; //TST containing the indices to token pointers
-
   size_t all; //total allocated
   size_t num; //number of used space by tokens
-  char* pattern; //regex consisting of all terminal tokens
 } Grammar;
 
 void initGrammar(Grammar* g) {
   MAIN.isTerm = TRUE;
   MAIN.rep = "main";
+  MAIN.pat = "(^\\s*main)";
 
   g->st = (struct token**)malloc(16 * sizeof(struct token*));
-  //g->indices = tst_init();
-  g->pattern = (char*)malloc(8 * sizeof(char));
-  strcpy(g->pattern, "(^main)");
   g->st[0] = &MAIN;
   g->num = 1;
   g->all = 16;
 }
 
 void addToken(Grammar* g, int isTerm, char* rep) {
+  if(debug > 0) printf("Adding Token: %s\n", rep);
+
   if (g->num == g->all) {
     g->all *= 2;
     g->st = (struct token**)realloc(g->st, g->all * sizeof(struct token*));
@@ -42,14 +39,12 @@ void addToken(Grammar* g, int isTerm, char* rep) {
   g->st[g->num]->isTerm = isTerm;
   g->st[g->num]->id = g->num;
   g->st[g->num]->rep = (char*)malloc(sizeof(rep));
-  //tst_ins(g->indices, rep, g->num);
+  g->st[g->num]->pat = (char*)malloc(sizeof(rep)+6*sizeof(char));
 
-  g->pattern = (char*)realloc(g->pattern, (strlen(g->pattern)+strlen(rep)+8)*sizeof(char));
-  if(debug > 0) printf("Adding Token: %s\n", rep);
-  strcat(g->pattern, "|(^\\s*");
-  strcat(g->pattern, rep);
-  strcat(g->pattern, ")");
   strcpy(g->st[g->num]->rep, rep);
+  strcpy(g->st[g->num]->pat, "(^\\s*");
+  strcat(g->st[g->num]->pat, rep);
+  strcat(g->st[g->num]->pat, ")");
   g->num++;
 }
 
@@ -64,61 +59,66 @@ int r_comp (regex_t* r, const char* expr)
   return err_code;
 }
 
-int* r_gmatch (regex_t* r, const char* str)
+int* r_gmatch (regex_t* r, regmatch_t* g, const char* str)
 {
   int mnum = 0;
   int* matches;
   matches = (int*)malloc(sizeof(int));
 
   int gnum = r->re_nsub + 1;
-  regmatch_t* g = malloc(gnum * sizeof(regmatch_t));
-  regexec(r, str, (size_t) gnum, g, 0);
-
-  if(debug > 1) printf("len: %d >", (int)strlen(str));
-
-  int i;
-  for (i = 0; i < gnum; i++) {
-    if (g[i].rm_so == (size_t)(-1) || g[i].rm_so == g[i].rm_eo || g[i].rm_so > strlen(str)) {}
-    else {
-      if(debug > 1) printf("%d (%d:%d), ", (int) i, g[i].rm_so, g[i].rm_eo);
-      matches[mnum] = i-1;
-      mnum++;
-      matches = (int*)realloc(matches, (mnum+1) * sizeof(int));
+  if(!regexec(r, str, (size_t) gnum, g, 0)){
+    for (int i = 0; i < gnum; i++) {
+      if (g[i].rm_so == (size_t)(-1) || g[i].rm_so == g[i].rm_eo || g[i].rm_so > strlen(str)) {}
+      else {
+        if(debug > 1) printf("%d (%d:%d), ", (int) i, g[i].rm_so, g[i].rm_eo);
+        matches[mnum] = i-1;
+        mnum++;
+        matches = (int*)realloc(matches, (mnum+1) * sizeof(int));
+      }
     }
   }
   if(debug > 1) printf("\n");
-  if(regexec(r, str, (size_t) gnum, g, 0)) {
-    if(debug > 0) printf("\033[1;31mAMBIGUOUS PATTERN!!!\033[0;0m\n");
-  }
+  
   matches[0] = mnum;
   return matches;
 }
 
 void tokenise(char* fname, Grammar* g) {
   regex_t r;
-  r_comp(&r, g->pattern);
-  if(debug > 0) printf(">>Using RegEx: %s\n\n", g->pattern);
+  int gnum;
+  int* gm;
 
   FILE *file;
   char buffer[255];
   file = fopen(fname, "r");
   while(fscanf(file, "%255[^\n]\n", buffer) == 1) {
-    if(debug > 0) printf("-------------\nRead string:\t%s\n", buffer);
-    int* gm = r_gmatch(&r, buffer);
-    if(gm[0] > 2) {
-      //JUST FOR DEBUG, should NEVER go here.
-      for(int i = 1; i < gm[0]; i++) {
-        if(debug > 0) printf("Multiple group matches\t\033[1;31m#%d: %s\033[0;0m\n", gm[i], g->st[gm[i]]->rep);
-      }
-    } else if(gm[0] == 2) {
-        if(debug > 0) {
-          //if(gm[1] == g->num) printf("\033[1;36mNo token listed\033[0;0m\n");
-          //else
-          printf("Exact match\t\033[1;32m#%d: %s\033[0;0m\n", gm[1], g->st[gm[1]]->rep);
+    if(debug > 0) printf("-------------\nReading line:\t%s\n", buffer);
+
+    int mnum = 0;
+    char tmpstr[strlen(buffer)];
+    for(int i = 0; i < g->num; i++){
+      r_comp(&r, g->st[i]->pat);
+      gnum = r.re_nsub + 1;
+      regmatch_t* grps = malloc(gnum * sizeof(regmatch_t));
+      gm = r_gmatch(&r, grps, buffer);
+
+
+      if(gm[0] > 2) {
+        printf("\033[1;31mTHIS SHOULDN'T HAPPEN!\033[0;0m\n");
+      } else if(gm[0] == 2) {
+        strcpy(tmpstr, buffer);
+        tmpstr[grps[gm[1]].rm_eo] = 0;
+        if(mnum == 0) {
+          printf("Matching token #%d %s >>> \033[1;32m%s\033[0;0m\n", i, g->st[i]->rep, tmpstr+grps[gm[1]].rm_so);
         }
-    } else {
-        if(debug > 0) printf("\033[1;31mNo match\033[0;0m\n");
+        else {
+          printf("Additional match #%d %s >>> \033[1;31m%s\033[0;0m\n", i, g->st[i]->rep, tmpstr+grps[gm[1]].rm_so);
+        }
+        mnum++;
+      }
     }
+    if(mnum > 1) printf("\033[1;31mAMBIGUOUS PATTERN!\033[0;0m\n");
+    if(mnum == 0) printf("\033[1;33mNO MATCHES!\033[0;0m\n");
     if(debug > 0) printf("-------------\n\n");
 
   }
@@ -138,10 +138,6 @@ int main(int argv, char* argc[]){
     addToken(&ST, TRUE, buffer);
   }
   fclose(file);
-
-  //TODO: move this somewhere else
-  //ST.pattern = (char*)realloc(ST.pattern, (strlen(ST.pattern)+6)*sizeof(char));
-  //strcat(ST.pattern, "|(^.)");
 
   if(argv != 2) {
     printf("No arguments given.");
