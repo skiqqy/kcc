@@ -1,4 +1,5 @@
 #include "tokens.h"
+//#include "tst.h"
 #include<stdlib.h>
 #include<stdio.h>
 #include<string.h>
@@ -12,6 +13,8 @@ int debug = 1;
 
 typedef struct {
   struct token** st; //array of pointers to tokens
+  //struct tst* indices; //TST containing the indices to token pointers
+
   size_t all; //total allocated
   size_t num; //number of used space by tokens
   char* pattern; //regex consisting of all terminal tokens
@@ -22,6 +25,7 @@ void initGrammar(Grammar* g) {
   MAIN.rep = "main";
 
   g->st = (struct token**)malloc(16 * sizeof(struct token*));
+  //g->indices = tst_init();
   g->pattern = (char*)malloc(8 * sizeof(char));
   strcpy(g->pattern, "(^main)");
   g->st[0] = &MAIN;
@@ -38,6 +42,8 @@ void addToken(Grammar* g, int isTerm, char* rep) {
   g->st[g->num]->isTerm = isTerm;
   g->st[g->num]->id = g->num;
   g->st[g->num]->rep = (char*)malloc(sizeof(rep));
+  //tst_ins(g->indices, rep, g->num);
+
   g->pattern = (char*)realloc(g->pattern, (strlen(g->pattern)+strlen(rep)+5)*sizeof(char));
   if(debug > 0) printf("Adding Token: %s\n", rep);
   strcat(g->pattern, "|(^");
