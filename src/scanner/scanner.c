@@ -44,9 +44,9 @@ void addToken(Grammar* g, int isTerm, char* rep) {
   g->st[g->num]->rep = (char*)malloc(sizeof(rep));
   //tst_ins(g->indices, rep, g->num);
 
-  g->pattern = (char*)realloc(g->pattern, (strlen(g->pattern)+strlen(rep)+5)*sizeof(char));
+  g->pattern = (char*)realloc(g->pattern, (strlen(g->pattern)+strlen(rep)+8)*sizeof(char));
   if(debug > 0) printf("Adding Token: %s\n", rep);
-  strcat(g->pattern, "|(^");
+  strcat(g->pattern, "|(^\\s*");
   strcat(g->pattern, rep);
   strcat(g->pattern, ")");
   strcpy(g->st[g->num]->rep, rep);
@@ -71,7 +71,7 @@ int* r_gmatch (regex_t* r, const char* str)
   matches = (int*)malloc(sizeof(int));
 
   int gnum = r->re_nsub + 1;
-  regmatch_t *g = malloc(gnum * sizeof(regmatch_t));
+  regmatch_t* g = malloc(gnum * sizeof(regmatch_t));
   regexec(r, str, (size_t) gnum, g, 0);
 
   if(debug > 1) printf("len: %d >", (int)strlen(str));
@@ -87,6 +87,9 @@ int* r_gmatch (regex_t* r, const char* str)
     }
   }
   if(debug > 1) printf("\n");
+  if(regexec(r, str, (size_t) gnum, g, 0)) {
+    if(debug > 0) printf("\033[1;31mAMBIGUOUS PATTERN!!!\033[0;0m\n");
+  }
   matches[0] = mnum;
   return matches;
 }
@@ -99,17 +102,19 @@ void tokenise(char* fname, Grammar* g) {
   FILE *file;
   char buffer[255];
   file = fopen(fname, "r");
-  while(fscanf(file, "%s", buffer) == 1) {
+  while(fscanf(file, "%255[^\n]\n", buffer) == 1) {
     if(debug > 0) printf("-------------\nRead string:\t%s\n", buffer);
     int* gm = r_gmatch(&r, buffer);
     if(gm[0] > 2) {
+      //JUST FOR DEBUG, should NEVER go here.
       for(int i = 1; i < gm[0]; i++) {
-        if(debug > 0) printf("Multiple matches\t\033[1;31m#%d\033[0;0m\n", gm[i]);
+        if(debug > 0) printf("Multiple group matches\t\033[1;31m#%d: %s\033[0;0m\n", gm[i], g->st[gm[i]]->rep);
       }
     } else if(gm[0] == 2) {
         if(debug > 0) {
-          if(gm[1] == g->num) printf("\033[1;36mNo token listed\033[0;0m\n");
-          else printf("Exact match\t\033[1;32m#%d: %s\033[0;0m\n", gm[1], g->st[gm[1]]->rep);
+          //if(gm[1] == g->num) printf("\033[1;36mNo token listed\033[0;0m\n");
+          //else
+          printf("Exact match\t\033[1;32m#%d: %s\033[0;0m\n", gm[1], g->st[gm[1]]->rep);
         }
     } else {
         if(debug > 0) printf("\033[1;31mNo match\033[0;0m\n");
@@ -129,7 +134,7 @@ int main(int argv, char* argc[]){
   FILE *file;
   char buffer[255];
   file = fopen("term", "r");
-  while(fscanf(file, "%s\n", buffer) == 1) {
+  while(fscanf(file, "%255[^\n]\n", buffer) == 1) {
     addToken(&ST, TRUE, buffer);
   }
   fclose(file);
