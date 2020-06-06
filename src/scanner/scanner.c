@@ -10,6 +10,13 @@
 int debug = 1; //verbosity level
 
 void tokenise(char* fname, Grammar* g) {
+  /*basic idea of this function:
+   *
+   * - Run all token regexes (all starting with ^) against the line.
+   * - If multiple regexes match, we have ambiguous patterns, that should be the case
+   * - If only one regex matches, everything is fine. We then move the pointer further
+   *   in the line and start scanning for the next token.
+   */
   struct gmatches gm;
 
   FILE *file;
@@ -24,7 +31,7 @@ void tokenise(char* fname, Grammar* g) {
       gm = r_gmatch(g->st[i]->pat, buffer);
 
       if(gm.m[0] > 2) {
-        printf("\033[1;31mTHIS SHOULDN'T HAPPEN!\033[0;0m\n");
+        printf("\033[1;31mThis shouldn't happen, since we only have one group.\033[0;0m\n");
       } else if(gm.m[0] == 2) {
         if(mnum == 0) {
           printf("Matching token #%d %s >>> \033[1;32m%s\033[0;0m\n", i, g->st[i]->rep, gm.s[1]);
@@ -47,6 +54,8 @@ int main(int argv, char* argc[]){
   Grammar ST;
   initGrammar(&ST);
 
+
+  //reading in built-in terminal tokens form file "term"
   FILE *file;
   char buffer[255];
   file = fopen("term", "r");

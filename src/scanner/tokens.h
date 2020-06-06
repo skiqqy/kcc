@@ -8,9 +8,9 @@
 
 struct token {
   int isTerm; //is the token a terminal? either 0 or 1
-  char* rep; //string representation (if it is a terminal)
-  char* pat; //string representation (if it is a terminal)
-  int id; //id of the token (equal to regex group positon in pattern)
+  char* rep; //regex representation
+  char* pat; //same as rep but enclosed by (^\\s* and )
+  int id; //number of token (maybe not necessary)
   struct token** var; //variations (if it is a non-terminal)
 } MAIN;
 
@@ -20,6 +20,7 @@ typedef struct {
   size_t num; //number of used space by tokens
 } Grammar;
 
+//initialise grammar by creating the first token for main
 void initGrammar(Grammar* g) {
   MAIN.isTerm = TRUE;
   MAIN.rep = "main";
@@ -31,6 +32,7 @@ void initGrammar(Grammar* g) {
   g->all = 16;
 }
 
+//add tokens to the grammar
 void addToken(Grammar* g, int isTerm, char* rep) {
   if (g->num == g->all) {
     g->all *= 2;

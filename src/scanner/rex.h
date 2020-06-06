@@ -1,10 +1,12 @@
 #include<regex.h>
 
+//return type for gmatches
 struct gmatches{
   int* m; //[0] is number of group matches, following are group indices
   char** s;//array of matching strings
 };
 
+//regex compilation
 int r_comp (regex_t* r, const char* expr)
 {
   int err_code = regcomp (r, expr, REG_EXTENDED);
@@ -16,6 +18,8 @@ int r_comp (regex_t* r, const char* expr)
   return err_code;
 }
 
+//determines how many groups match and returns the matches a gmatches
+//arguments: regex pattern, string to run regex against
 struct gmatches r_gmatch (char* pat, const char* str)
 {
   regex_t r;
